@@ -2,7 +2,7 @@
     "C_Cpp.intelliSenseEngine": "disabled",
     "cmake.configureOnOpen": true,
     "cmake.generator": "Ninja",
-    "cmake.buildDirectory": "${workspaceFolder}/build/debug",
+    "cmake.buildDirectory": "${workspaceFolder}/build",
     "cmake.configureSettings": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
@@ -12,6 +12,6 @@
         "--clang-tidy",
         "--completion-style=detailed",
         "--header-insertion=iwyu",
-        "--compile-commands-dir=${workspaceFolder}/build/debug"
+        "--compile-commands-dir=${workspaceFolder}/build"
     ]
 }

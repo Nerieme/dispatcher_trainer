@@ -1,7 +1,9 @@
 #include <iostream>
 #include <string>
+#include <filesystem>
 
 #include "dispatcher/stl/SimulatorCore.hpp"
+#include "dispatcher/stl/CommandResult.hpp"
 #include "dispatcher/stl/Event.hpp"
 #include "dispatcher/stl/Parameter.hpp"
 
@@ -28,13 +30,17 @@ void printHelp() {
     std::cout << "Команды:\n"
               << "  status                      — показать параметры\n"
               << "  find <name>                 — найти параметр по имени\n"
-              << "  alarms                      — показать тревожные события\n"
+              << "  find_index <name>           — найти индекс через std::optional\n"
+              << "  set <name> <value>          — установить значение (optional)\n"
+              << "  cmd <name> <value>          — команда оператора (variant + visit)\n"
+              << "  save_log                    — сохранить журнал через std::filesystem\n"
+              << "  alarms                      — тревожные события\n"
               << "  count_alarms                — количество тревожных событий\n"
-              << "  log                         — исходный журнал (без сортировки)\n"
+              << "  log                         — исходный журнал\n"
               << "  log_sorted                  — отсортированная копия журнала\n"
               << "  stats                       — статистика по типам событий\n"
-              << "  names                       — краткий список имён параметров\n"
-              << "  lines                       — краткий список параметров name=value\n"
+              << "  names                       — имена параметров\n"
+              << "  lines                       — параметры name=value\n"
               << "  help                        — справка\n"
               << "  exit                        — выход\n";
 }
@@ -42,19 +48,19 @@ void printHelp() {
 SimulatorCore buildDemoCore() {
     SimulatorCore core;
 
-    // Параметры диспетчера безопасности
-    core.addParameter({"smoke_level",   12.0,  0.0,  100.0, "%"});
-    core.addParameter({"temperature",   28.5, 18.0,   60.0, "C"});
+    // Параметры тренажёра безопасности
+    core.addParameter({"smoke_level",   12.0,  0.0,   60.0, "%"});
+    core.addParameter({"temperature",   28.5, 18.0,   70.0, "C"});
     core.addParameter({"active_sensors", 2.0,  0.0,   10.0, "шт."});
     core.addParameter({"brigade_load",  40.0,  0.0,  100.0, "%"});
 
     // Журнал событий
-    core.addEvent({1, EventType::Info,           "Тренажёр запущен",                    1});
-    core.addEvent({2, EventType::OperatorAction, "Оператор запросил статус",            2});
-    core.addEvent({3, EventType::Warning,        "Датчик room A: задымление 45%",       5});
-    core.addEvent({4, EventType::Alarm,          "Датчик room A: задымление 78%",      10});
-    core.addEvent({5, EventType::Warning,        "Камера room D: нет сигнала",          4});
-    core.addEvent({6, EventType::Info,           "Brigade A: выехала в build 1",        2});
+    core.addEvent({1, EventType::Info,           "Тренажёр запущен",               1});
+    core.addEvent({2, EventType::OperatorAction, "Оператор запросил статус",       2});
+    core.addEvent({3, EventType::Warning,        "Датчик room A: задымление 45%",  5});
+    core.addEvent({4, EventType::Alarm,          "Датчик room A: задымление 78%", 10});
+    core.addEvent({5, EventType::Warning,        "Камера room D: нет сигнала",     4});
+    core.addEvent({6, EventType::Info,           "Brigade A: выехала в build 1",   2});
 
     return core;
 }
@@ -77,19 +83,67 @@ int main() {
             printHelp();
         } else if (line == "status") {
             printParameters(core);
-        } else if (line == "find" || line.rfind("find ", 0) == 0) {
-            std::string name;
-            if (line == "find") {
-                std::cout << "Формат: find <name>\n";
-                continue;
-            }
-            name = line.substr(5);
+        } else if (line.rfind("find ", 0) == 0) {
+            std::string name = line.substr(5);
             auto p = core.findParameter(name);
             if (p) {
                 std::cout << "Найден: " << p->name << " = " << p->value
                           << " " << p->unit << "\n";
             } else {
                 std::cout << "Параметр не найден: " << name << "\n";
+            }
+        } else if (line.rfind("find_index ", 0) == 0) {
+            std::string name = line.substr(11);
+            auto idx = core.findParameterIndex(name);
+            if (idx) {
+                std::cout << "Индекс параметра \"" << name << "\": " << *idx << "\n";
+            } else {
+                std::cout << "Параметр не найден: " << name << "\n";
+            }
+        } else if (line.rfind("set ", 0) == 0) {
+            // set <name> <value>
+            std::size_t space = line.find(' ', 4);
+            if (space == std::string::npos) {
+                std::cout << "Формат: set <name> <value>\n";
+                continue;
+            }
+            std::string name = line.substr(4, space - 4);
+            double value = 0.0;
+            try {
+                value = std::stod(line.substr(space + 1));
+            } catch (...) {
+                std::cout << "Некорректное значение\n";
+                continue;
+            }
+            if (core.setParameterValue(name, value)) {
+                std::cout << "Значение изменено: " << name << "\n";
+            } else {
+                std::cout << "Параметр не найден: " << name << "\n";
+            }
+        } else if (line.rfind("cmd ", 0) == 0) {
+            // cmd <name> <value>
+            std::size_t space = line.find(' ', 4);
+            if (space == std::string::npos) {
+                std::cout << "Формат: cmd <name> <value>\n";
+                continue;
+            }
+            std::string name = line.substr(4, space - 4);
+            double value = 0.0;
+            try {
+                value = std::stod(line.substr(space + 1));
+            } catch (...) {
+                std::cout << "Некорректное значение\n";
+                continue;
+            }
+            CommandResult result = core.applyOperatorCommand(name, value);
+            std::cout << commandResultToText(result) << "\n";
+        } else if (line == "save_log") {
+            std::filesystem::path logPath = std::filesystem::path("logs") / "security_session.txt";
+            try {
+                core.saveTextLog(logPath);
+                std::cout << "Журнал сохранён: " << logPath.string() << "\n";
+            } catch (const std::exception& ex) {
+                std::cout << "Ошибка сохранения: " << ex.what() << "\n";
             }
         } else if (line == "alarms") {
             auto alarms = core.filterAlarmEvents();

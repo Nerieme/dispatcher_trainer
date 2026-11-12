@@ -1,6 +1,8 @@
 #include "dispatcher/stl/SimulatorCore.hpp"
 
 #include <algorithm>
+#include <fstream>
+#include <stdexcept>
 
 namespace dispatcher {
 
@@ -10,15 +12,54 @@ void SimulatorCore::addParameter(Parameter parameter) {
 }
 
 std::optional<Parameter> SimulatorCore::findParameter(const std::string& name) const {
+    if (auto idx = findParameterIndex(name); idx.has_value()) {
+        return parameters_.at(*idx);
+    }
+    return std::nullopt;
+}
+
+std::optional<std::size_t> SimulatorCore::findParameterIndex(const std::string& name) const {
     // Сначала — быстрый поиск по индексу
     if (auto it = parameterIndex_.find(name); it != parameterIndex_.end()) {
-        return parameters_.at(it->second);
+        return it->second;
     }
     // Резерв — find_if по vector
     auto it = std::find_if(parameters_.begin(), parameters_.end(),
                            [&name](const Parameter& p) { return p.name == name; });
-    if (it != parameters_.end()) return *it;
+    if (it != parameters_.end()) {
+        return static_cast<std::size_t>(std::distance(parameters_.begin(), it));
+    }
     return std::nullopt;
+}
+
+bool SimulatorCore::setParameterValue(const std::string& name, double value) {
+    auto index = findParameterIndex(name);
+    if (!index) {
+        addEvent({events_.size() + 1, EventType::Warning,
+                  "Параметр не найден: " + name, 5});
+        return false;
+    }
+    parameters_[*index].value = value;
+    addEvent({events_.size() + 1, EventType::OperatorAction,
+              "Значение параметра изменено: " + name, 2});
+    return true;
+}
+
+CommandResult SimulatorCore::applyOperatorCommand(const std::string& parameterName,
+                                                   double newValue) {
+    auto index = findParameterIndex(parameterName);
+    if (!index) {
+        return CommandError{"Параметр не найден: " + parameterName};
+    }
+
+    Parameter& p = parameters_[*index];
+    p.value = newValue;
+
+    // Простая проверка: вышли за верхнюю границу
+    if (newValue > p.maxValue) {
+        return CommandWarning{"Значение вне нормы: " + parameterName};
+    }
+    return CommandOk{"Значение изменено: " + parameterName};
 }
 
 void SimulatorCore::rebuildParameterIndex() {
@@ -52,9 +93,9 @@ std::vector<Event> SimulatorCore::sortedLog() const {
     std::sort(copy.begin(), copy.end(),
               [](const Event& left, const Event& right) {
                   if (left.priority != right.priority) {
-                      return left.priority > right.priority;   // выше приоритет — раньше
+                      return left.priority > right.priority;
                   }
-                  return left.id < right.id;                   // при равенстве — по id
+                  return left.id < right.id;
               });
     return copy;
 }
@@ -65,6 +106,24 @@ std::map<EventType, std::size_t> SimulatorCore::eventStatistics() const {
         ++statistics[event.type];
     }
     return statistics;
+}
+
+void SimulatorCore::saveTextLog(const std::filesystem::path& path) const {
+    if (path.has_parent_path()) {
+        std::filesystem::create_directories(path.parent_path());
+    }
+
+    std::ofstream out(path);
+    if (!out) {
+        throw std::runtime_error("Не удалось открыть файл журнала: " + path.string());
+    }
+
+    for (const auto& event : events_) {
+        out << "[" << event.id << "] "
+            << toString(event.type)
+            << " prio=" << event.priority
+            << " — " << event.message << '\n';
+    }
 }
 
 std::vector<std::string> SimulatorCore::parameterNames() const {

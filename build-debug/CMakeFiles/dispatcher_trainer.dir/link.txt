@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/dispatcher_trainer.dir/app/main.cpp.o CMakeFiles/dispatcher_trainer.dir/src/stl/Event.cpp.o CMakeFiles/dispatcher_trainer.dir/src/stl/SimulatorCore.cpp.o -o dispatcher_trainer 

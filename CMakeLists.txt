@@ -29,6 +29,16 @@ target_compile_options(test_stl_core PRIVATE -Wall -Wextra -Wpedantic)
 
 add_test(NAME stl_core COMMAND test_stl_core)
 
+add_executable(test_modern_cpp
+    tests/test_modern_cpp.cpp
+    src/stl/Event.cpp
+    src/stl/SimulatorCore.cpp
+)
+target_include_directories(test_modern_cpp PRIVATE include)
+target_compile_options(test_modern_cpp PRIVATE -Wall -Wextra -Wpedantic)
+
+add_test(NAME modern_cpp COMMAND test_modern_cpp)
+
 # target_include_directories(dispatcher_trainer PRIVATE include)
 
 # target_compile_options(dispatcher_trainer PRIVATE

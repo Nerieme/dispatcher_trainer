@@ -1,0 +1,6 @@
+[1] Info prio=1 — Тренажёр запущен
+[2] OperatorAction prio=2 — Оператор запросил статус
+[3] Warning prio=5 — Датчик room A: задымление 45%
+[4] Alarm prio=10 — Датчик room A: задымление 78%
+[5] Warning prio=4 — Камера room D: нет сигнала
+[6] Info prio=2 — Brigade A: выехала в build 1
