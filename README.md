@@ -24,7 +24,7 @@ cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
 cmake --build build
 ./build/dispatcher_trainer
 ```
-
+git conflict other changes
 ## Сборка в Linux VM
 ```bash
 sudo apt update
