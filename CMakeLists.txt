@@ -8,7 +8,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(dispatcher_trainer
     app/main.cpp
-    src/trainer_logic.cpp
+    src/log.cpp
+    src/model.cpp
+    src/commands.cpp
 )
 
 target_include_directories(dispatcher_trainer PRIVATE include)
