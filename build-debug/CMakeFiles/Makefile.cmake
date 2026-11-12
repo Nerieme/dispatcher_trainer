@@ -103,4 +103,5 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/dispatcher_app.dir/DependInfo.cmake"
   "CMakeFiles/test_stl_core.dir/DependInfo.cmake"
   "CMakeFiles/test_modern_cpp.dir/DependInfo.cmake"
+  "CMakeFiles/dispatcher_tests.dir/DependInfo.cmake"
   )

@@ -1,142 +1,89 @@
-## Название работы и выбранный вариант предметной области
-
-Лабораторная работа 11. Воспроизводимая учебная среда.
+Лабораторная работа 12. Минимальное модульное тестирование.
 Вариант предметной области: диспетчер безопасности объекта.
 
-## Краткое описание того, зачем проекту нужна воспроизводимая среда
+## Краткое описание роли модульных тестов в учебном проекте
 
-В предыдущих лабораторных работах проект собирался через CMake на конкретном компьютере. При переносе на другую машину могли возникнуть проблемы:
+Модульные тесты проверяют отдельные функции и методы ядра тренажёра без ручного ввода с клавиатуры и без зависимости от состояния консоли. В учебном проекте они решают три задачи:
 
-1. разные версии g++/clang++ дают разное поведение для std::optional, std::variant, concepts;
-2. разная версия CMake может по-разному обрабатывать target_compile_features и target_include_directories;
-3. разный набор установленных пакетов (build-essential, gdb, git);
-4. настройки VS Code (launch.json, settings.json) у каждого свои.
+1. Фиксируют ожидаемое поведение. Например, что findParameter("speed") возвращает std::nullopt, а findParameter("temperature") — значение. Без тестов это «знание» живёт только в голове автора и теряется при изменениях.
+2. Ловят регрессии. При доработке ядра (ЛР 8, ЛР 10) можно случайно сломать поиск или обработку команд. Тест сразу покажет, что поведение изменилось.
+3. Помогают найти реальные ошибки. В ходе ЛР 12 тест test_value_below_range_is_clamped_or_rejected обнаружил, что applyOperatorCommand проверял только верхнюю границу, но не нижнюю. Ошибка была исправлена в src/stl/SimulatorCore.cpp.
 
-Воспроизводимая среда через Docker Dev Container решает эти проблемы:
+Модульные тесты не заменяют ручной демонстрационный сценарий и не проверяют консольное меню — они работают на уровне ядра. Интеграционные, сетевые, GUI-тесты и CI/CD в первом модуле не используются.
 
-1. все студенты и преподаватель работают в одинаковой версии и одинаковом наборе инструментов;
-2. сборка выполняется по одному сценарию — cmake -S . -B build-debug, cmake --build build-debug;
-3. .devcontainer/ хранится в Git, поэтому среда передаётся вместе с проектом;
-4. README содержит единые команды для devcontainer и Linux VM.
+## Список функций и методов, выбранных для проверки
+| Группа                            | Функция / метод                       | Что проверяется                                                                        |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Диапазоны**                     | `Parameter::minValue`,                | значение внутри диапазона принимается; значение ниже минимума даёт `CommandWarning`;   |
+|                                   | `Parameter::maxValue` +               | значение выше максимума даёт `CommandWarning`                                          |
+|                                   | `SimulatorCore::setParameterValue`,   |                                                                                        |
+|                                   | `SimulatorCore::applyOperatorCommand` |                                                                                        |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Изменение состояния**           | `SimulatorCore::setParameterValue`,   | параметр действительно меняется (`findParameter` возвращает новое значение); команда   |
+|                                   | `SimulatorCore::applyOperatorCommand` | возвращает `CommandOk` при корректном значении                                         |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Поиск параметра**               | `SimulatorCore::findParameter`,       | существующий параметр найден (значение и индекс); отсутствующий параметр возвращает    |
+|                                   | `SimulatorCore::findParameterIndex`   | `std::nullopt`                                                                         |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Добавление события**            | `SimulatorCore::addEvent`,            | размер журнала увеличивается на 1; последнее событие совпадает по тексту и типу        |
+|                                   | `SimulatorCore::events()`             |                                                                                        |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Дополнительно: подсчёт тревог** | `SimulatorCore::countAlarmEvents`,    | считаются только `Warning` + `Alarm`, `Info` и `OperatorAction` не учитываются         |
+|                                   | `SimulatorCore::filterAlarmEvents`    |                                                                                        |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Дополнительно: сортировка**     | `SimulatorCore::sortedLog`            | копия журнала сортируется по `priority` desc, `id` asc; исходный журнал не меняется    |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
+| **Дополнительно: статистика**     | `SimulatorCore::eventStatistics`      | по каждому `EventType` считается корректное количество                                 |
+|-----------------------------------|---------------------------------------|----------------------------------------------------------------------------------------|
 
-Это делает проект воспроизводимым: преподаватель открывает репозиторий в контейнере и получает тот же результат, что и автор.
+## Позитивные и негативные сценарии
+| Проверяемая операция              | Позитивный сценарий                                       | Негативный / граничный сценарий                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Диапазоны**                     | `setParameterValue("temperature", 40.0)`                  | `applyOperatorCommand("temperature", 5.0)` → `CommandWarning`; |
+|                                   | при `min = 18.0`, `max = 70.0` → `true`,                  | `applyOperatorCommand("temperature", 99.0)` → `CommandWarning` |
+|                                   | значение `40.0`                                           |                                                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Изменение состояния**           | `setParameterValue("smoke_level", 45.0)` → `true`,        | `applyOperatorCommand("unknown", 1.0)` → `CommandError`        |
+|                                   | `findParameter("smoke_level")->value == 45.0`             |                                                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Изменение состояния (команда)** | `applyOperatorCommand("temperature", 40.0)` → `CommandOk`,| `applyOperatorCommand("temperature", 5.0)` →                   |
+|                                   | текст `"Значение изменено: temperature"`                  | `CommandWarning` (после фикса нижней границы)                  |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Поиск параметра**               | `findParameter("pressure")` → `has_value() == true`,      | `findParameter("speed")` → `has_value() == false`;             |
+|                                   | `value == 5.0`; `findParameterIndex("pressure")` → `0`    | `findParameterIndex("speed")` → `std::nullopt`                 |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Добавление события**            | `addEvent({1, EventType::Warning,`                        | пустой журнал → `countAlarmEvents() == 0`,                     |
+|                                   | `"Датчик room A:задымление 45%", 5})` → размер `+1`,      | `filterAlarmEvents().empty()`, `eventStatistics().empty()`     |
+|                                   | `events().back().message` совпадает, `type == Warning`    |                                                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Подсчёт тревог**                | журнал с `Info`, `Warning`, `Alarm`,                      | журнал только с `Info` → `countAlarmEvents() == 0`             |
+|                                   | `OperatorAction` → `countAlarmEvents() == 2`              |                                                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Сортировка**                    | 3 события с приоритетами                                  | 1 событие → `sortedLog().size() == 1`, порядок не меняется     |
+|                                   | `1, 5, 10` → `sortedLog()[0].id == 3`;                    |                                                                |
+|                                   | исходный журнал остаётся `1, 2, 3`                        |                                                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
+| **Статистика**                    | 3 события трёх типов → `stats.at(Info) == 1`,             | пустой журнал → `stats.empty()`                                |
+|                                   | `stats.at(Warning) == 1`, `stats.at(Alarm) == 1`          |                                                                |
+|-----------------------------------|-----------------------------------------------------------|----------------------------------------------------------------|
 
-## Текст Dockerfile и пояснение пакетов
-
-```dockerfile
-FROM mcr.microsoft.com/devcontainers/cpp:1-debian-12
-
-RUN apt-get update \
-    && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends \
-        cmake ninja-build git clang clangd clang-format lldb gdb \
-        pkg-config ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
-
-WORKDIR /workspaces/dispatcher_trainer
-```
-
-1. mcr.microsoft.com/devcontainers/cpp:1-debian-12	- 
-базовый образ Microsoft Dev Containers на Debian 12 (bookworm). Уже содержит vscode-пользователя, git, sudo, типичные настройки devcontainer
-2. cmake - сборка проекта
-3. ninja-build - генератор Ninja (в devcontainer.json — "cmake.generator": "Ninja")
-4. git - история, коммиты
-5. clang - компилятор clang++ (проверяется в postCreateCommand)
-6. clangd - language server для VS Code (проверяется в postCreateCommand)
-7. clang-format - форматирование кода
-8. lldb - отладчик, на котором работает CodeLLDB (проверяется в postCreateCommand)
-9. gdb - альтернативный отладчик из консоли
-10. pkg-config, ca-certificates - на будущее
-11. WORKDIR /workspaces/dispatcher_trainer — рабочая папка, совпадает с workspaceFolder в devcontainer.json.
-
-## Текст devcontainer.json и пояснение
-```json
-{
-  "name": "C++20 Dispatcher Trainer",
-  "build": {
-    "dockerfile": "Dockerfile",
-    "context": "."
-  },
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-vscode.cmake-tools",
-        "llvm-vs-code-extensions.vscode-clangd",
-        "vadimcn.vscode-lldb"
-      ],
-      "settings": {
-        "C_Cpp.intelliSenseEngine": "disabled",
-        "cmake.configureOnOpen": true,
-        "cmake.generator": "Ninja"
-      }
-    }
-  },
-  "postCreateCommand": "cmake --version && clang++ --version && clangd --version && lldb --version",
-  "remoteUser": "vscode"
-}
-```
-
-1. name - отображается в левом нижнем углу VS Code
-2. build.dockerfile - путь к Dockerfile
-3. build.context - контекст сборки — корень проекта
-4. customizations.vscode.extensions - рекомендованные расширения: CMake Tools, clangd, CodeLLDB
-5. customizations.vscode.settings - отключает встроенный IntelliSense (используем clangd), включает авто-Configure CMake, задаёт Ninja
-6. postCreateCommand - после создания контейнера проверяет версии cmake, clang++, clangd, lldb — если что-то не установлено, контейнер сообщит об ошибке
-7. remoteUser - пользователь внутри контейнера — vscode
-
-## Проверка версий инструментов внутри контейнера
-
-cmake --version
-clang++ --version
-clangd --version
-lldb --version
-ninja --version
-git --version
-
-## Команды CMake-сборки и запуска внутри контейнера
-
+## Сборка и запуск тестов в devcontainer
 ```bash
 rm -rf build-debug
 cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build-debug
-./build-debug/dispatcher_app
-```
-
-Release-сборка:
-```bash
-cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cmake --build build-release
-./build-release/dispatcher_app
-```
-
-Тесты:
-```bash
+./build-debug/dispatcher_tests
 ctest --test-dir build-debug --output-on-failure
 ```
 
-## Инструкция запуска
-
-### Вариант 1 — Docker Dev Container (основной)
-
-1. Установить Docker Desktop и расширение VS Code **Dev Containers**.
-2. Открыть папку проекта в VS Code.
-3. Command Palette → **Dev Containers: Reopen in Container**.
-4. Дождаться сборки контейнера. `postCreateCommand` автоматически проверит
-   версии `cmake`, `clang++`, `clangd`, `lldb`.
-5. В терминале контейнера собрать и запустить:
-
-```bash
-cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cmake --build build-debug
-./build-debug/dispatcher_app
-```
-
-### Вариант 2 — Linux VM VirtualBox (альтернативный)
-
+## Альтернативный запуск в Linux VM
 ```bash
 sudo apt update
 sudo apt install -y build-essential clang clangd lldb cmake ninja-build git
 cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 cmake --build build-debug
-./build-debug/dispatcher_app
+ctest --test-dir build-debug --output-on-failure
 ```
+
+## Краткое описание намеренно падающего теста
+Временное изменение ожидаемого значения в test_parameter_update_changes_state привело к падению теста: ./dispatcher_tests завершился с сообщением FAILED: INTENTIONALLY WRONG: should fail, а ctest показал ***Failed. После возврата корректного ожидаемого значения (45.0) тест снова прошёл. Это подтверждает, что тест действительно проверяет поведение ядра, а не просто «всегда зелёный».

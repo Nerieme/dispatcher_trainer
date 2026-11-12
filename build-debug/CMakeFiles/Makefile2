@@ -67,6 +67,7 @@ all: CMakeFiles/dispatcher_core.dir/all
 all: CMakeFiles/dispatcher_app.dir/all
 all: CMakeFiles/test_stl_core.dir/all
 all: CMakeFiles/test_modern_cpp.dir/all
+all: CMakeFiles/dispatcher_tests.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -78,6 +79,7 @@ clean: CMakeFiles/dispatcher_core.dir/clean
 clean: CMakeFiles/dispatcher_app.dir/clean
 clean: CMakeFiles/test_stl_core.dir/clean
 clean: CMakeFiles/test_modern_cpp.dir/clean
+clean: CMakeFiles/dispatcher_tests.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -139,7 +141,7 @@ CMakeFiles/dispatcher_app.dir/clean:
 CMakeFiles/test_stl_core.dir/all: CMakeFiles/dispatcher_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=8,9 "Built target test_stl_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=10,11 "Built target test_stl_core"
 .PHONY : CMakeFiles/test_stl_core.dir/all
 
 # Build rule for subdir invocation for target.
@@ -165,7 +167,7 @@ CMakeFiles/test_stl_core.dir/clean:
 CMakeFiles/test_modern_cpp.dir/all: CMakeFiles/dispatcher_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=6,7 "Built target test_modern_cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=8,9 "Built target test_modern_cpp"
 .PHONY : CMakeFiles/test_modern_cpp.dir/all
 
 # Build rule for subdir invocation for target.
@@ -183,6 +185,32 @@ test_modern_cpp: CMakeFiles/test_modern_cpp.dir/rule
 CMakeFiles/test_modern_cpp.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/clean
 .PHONY : CMakeFiles/test_modern_cpp.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/dispatcher_tests.dir
+
+# All Build rule for target.
+CMakeFiles/dispatcher_tests.dir/all: CMakeFiles/dispatcher_core.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=6,7 "Built target dispatcher_tests"
+.PHONY : CMakeFiles/dispatcher_tests.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/dispatcher_tests.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dispatcher_tests.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/dispatcher_tests.dir/rule
+
+# Convenience name for target.
+dispatcher_tests: CMakeFiles/dispatcher_tests.dir/rule
+.PHONY : dispatcher_tests
+
+# clean rule for target.
+CMakeFiles/dispatcher_tests.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/clean
+.PHONY : CMakeFiles/dispatcher_tests.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

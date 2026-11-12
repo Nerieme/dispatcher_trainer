@@ -8,3 +8,5 @@ add_test([=[stl_core]=] "/workspaces/dispatcher_trainer/build-debug/test_stl_cor
 set_tests_properties([=[stl_core]=] PROPERTIES  _BACKTRACE_TRIPLES "/workspaces/dispatcher_trainer/CMakeLists.txt;64;add_test;/workspaces/dispatcher_trainer/CMakeLists.txt;0;")
 add_test([=[modern_cpp]=] "/workspaces/dispatcher_trainer/build-debug/test_modern_cpp")
 set_tests_properties([=[modern_cpp]=] PROPERTIES  _BACKTRACE_TRIPLES "/workspaces/dispatcher_trainer/CMakeLists.txt;71;add_test;/workspaces/dispatcher_trainer/CMakeLists.txt;0;")
+add_test([=[dispatcher_tests]=] "/workspaces/dispatcher_trainer/build-debug/dispatcher_tests")
+set_tests_properties([=[dispatcher_tests]=] PROPERTIES  _BACKTRACE_TRIPLES "/workspaces/dispatcher_trainer/CMakeLists.txt;82;add_test;/workspaces/dispatcher_trainer/CMakeLists.txt;0;")

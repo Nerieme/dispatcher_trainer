@@ -1,3 +1,4 @@
-stl_core 1 0.003337
-modern_cpp 1 0.0103008
+stl_core 1 0.0034739
+modern_cpp 1 0.0124974
+dispatcher_tests 1 0.0030634
 ---

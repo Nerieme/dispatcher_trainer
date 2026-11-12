@@ -2,6 +2,7 @@
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/dispatcher_app.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/test_stl_core.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/test_modern_cpp.dir
+/workspaces/dispatcher_trainer/build-debug/CMakeFiles/dispatcher_tests.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/test.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/edit_cache.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/rebuild_cache.dir

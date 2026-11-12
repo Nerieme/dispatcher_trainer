@@ -70,6 +70,17 @@ target_link_libraries(test_modern_cpp PRIVATE dispatcher_core)
 target_compile_features(test_modern_cpp PRIVATE cxx_std_20)
 add_test(NAME modern_cpp COMMAND test_modern_cpp)
 
+add_executable(dispatcher_tests
+    tests/test_core.cpp
+)
+target_link_libraries(dispatcher_tests PRIVATE dispatcher_core)
+target_compile_features(dispatcher_tests PRIVATE cxx_std_20)
+target_compile_options(dispatcher_tests
+    PRIVATE
+        -Wall -Wextra -Wpedantic
+)
+add_test(NAME dispatcher_tests COMMAND dispatcher_tests)
+
 # target_include_directories(dispatcher_trainer PRIVATE include)
 
 # target_compile_options(dispatcher_trainer PRIVATE

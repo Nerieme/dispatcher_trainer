@@ -178,6 +178,19 @@ test_modern_cpp/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/build
 .PHONY : test_modern_cpp/fast
 
+#=============================================================================
+# Target rules for targets named dispatcher_tests
+
+# Build rule for target.
+dispatcher_tests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dispatcher_tests
+.PHONY : dispatcher_tests
+
+# fast build rule for target.
+dispatcher_tests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/build
+.PHONY : dispatcher_tests/fast
+
 app/main.o: app/main.cpp.o
 .PHONY : app/main.o
 
@@ -250,6 +263,30 @@ src/stl/SimulatorCore.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/SimulatorCore.cpp.s
 .PHONY : src/stl/SimulatorCore.cpp.s
 
+tests/test_core.o: tests/test_core.cpp.o
+.PHONY : tests/test_core.o
+
+# target to build an object file
+tests/test_core.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/tests/test_core.cpp.o
+.PHONY : tests/test_core.cpp.o
+
+tests/test_core.i: tests/test_core.cpp.i
+.PHONY : tests/test_core.i
+
+# target to preprocess a source file
+tests/test_core.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/tests/test_core.cpp.i
+.PHONY : tests/test_core.cpp.i
+
+tests/test_core.s: tests/test_core.cpp.s
+.PHONY : tests/test_core.s
+
+# target to generate assembly for a file
+tests/test_core.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_tests.dir/build.make CMakeFiles/dispatcher_tests.dir/tests/test_core.cpp.s
+.PHONY : tests/test_core.cpp.s
+
 tests/test_modern_cpp.o: tests/test_modern_cpp.cpp.o
 .PHONY : tests/test_modern_cpp.o
 
@@ -309,6 +346,7 @@ help:
 	@echo "... test"
 	@echo "... dispatcher_app"
 	@echo "... dispatcher_core"
+	@echo "... dispatcher_tests"
 	@echo "... test_modern_cpp"
 	@echo "... test_stl_core"
 	@echo "... app/main.o"
@@ -320,6 +358,9 @@ help:
 	@echo "... src/stl/SimulatorCore.o"
 	@echo "... src/stl/SimulatorCore.i"
 	@echo "... src/stl/SimulatorCore.s"
+	@echo "... tests/test_core.o"
+	@echo "... tests/test_core.i"
+	@echo "... tests/test_core.s"
 	@echo "... tests/test_modern_cpp.o"
 	@echo "... tests/test_modern_cpp.i"
 	@echo "... tests/test_modern_cpp.s"

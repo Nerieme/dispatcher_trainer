@@ -56,7 +56,7 @@ CommandResult SimulatorCore::applyOperatorCommand(const std::string& parameterNa
     p.value = newValue;
 
     // Простая проверка: вышли за верхнюю границу
-    if (newValue > p.maxValue) {
+    if (newValue > p.maxValue || newValue < p.minValue) {
         return CommandWarning{"Значение вне нормы: " + parameterName};
     }
     return CommandOk{"Значение изменено: " + parameterName};
