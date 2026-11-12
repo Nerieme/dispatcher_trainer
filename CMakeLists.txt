@@ -8,9 +8,11 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable(dispatcher_trainer
     app/main.cpp
-    src/log.cpp
-    src/model.cpp
-    src/commands.cpp
+    src/DispatchTypes.cpp
+    src/DispatchUnit.cpp
+    src/Incident.cpp
+    src/EventLog.cpp
+    src/DispatchCenter.cpp
 )
 
 target_include_directories(dispatcher_trainer PRIVATE include)

@@ -1,0 +1,103 @@
+```mermaid
+classDiagram
+    class DispatchUnit {
+        -int id_
+        -string name_
+        -string zone_
+        -UnitStatus status_
+        -optional~int~ assignedIncidentId_
+        +DispatchUnit(int id, string name, string zone)
+        +id() int
+        +name() const string&
+        +zone() const string&
+        +status() UnitStatus
+        +assignedIncidentId() optional~int~
+        +assignToIncident(int incidentId) bool
+        +release() void
+        +setMaintenance() void
+        +setOffline() void
+    }
+
+    class Incident {
+        -int id_
+        -string title_
+        -string zone_
+        -Severity severity_
+        -IncidentStatus status_
+        -VisualMarker marker_
+        -optional~int~ assignedUnitId_
+        +Incident(int id, string title, string zone, Severity severity, VisualMarker marker)
+        +id() int
+        +title() const string&
+        +zone() const string&
+        +severity() Severity
+        +status() IncidentStatus
+        +marker() VisualMarker
+        +assignedUnitId() optional~int~
+        +assignUnit(int unitId) bool
+        +close() void
+    }
+
+    class EventLog {
+        -ofstream out_
+        +EventLog(const filesystem::path& path)
+        +~EventLog()
+        +write(string_view message) void
+    }
+
+    class DispatchCenter {
+        -EventLog& log_
+        -vector~DispatchUnit~ units_
+        -vector~Incident~ incidents_
+        -findUnit(int id) DispatchUnit*
+        -findIncident(int id) Incident*
+        +DispatchCenter(EventLog& log)
+        +addUnit(DispatchUnit unit) void
+        +addIncident(Incident incident) void
+        +assign(int unitId, int incidentId) bool
+        +closeIncident(int incidentId) bool
+        +printUnits() const void
+        +printIncidents() const void
+        +printState() const void
+    }
+
+    class UnitStatus {
+        <<enumeration>>
+        Available
+        Busy
+        Maintenance
+        Offline
+    }
+
+    class IncidentStatus {
+        <<enumeration>>
+        Open
+        Assigned
+        Closed
+    }
+
+    class Severity {
+        <<enumeration>>
+        Low
+        Medium
+        High
+        Critical
+    }
+
+    class VisualMarker {
+        <<enumeration>>
+        None
+        Alert
+        Route
+        Repair
+        Evacuation
+        Sensor
+    }
+
+    DispatchCenter "1" o-- "many" DispatchUnit : units_
+    DispatchCenter "1" o-- "many" Incident : incidents_
+    DispatchCenter --> EventLog : log_
+    DispatchUnit --> UnitStatus
+    Incident --> IncidentStatus
+    Incident --> Severity
+    Incident --> VisualMarker

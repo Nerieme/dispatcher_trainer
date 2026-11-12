@@ -1,91 +1,70 @@
 #include <iostream>
 #include <string>
-#include <vector>
 
-#include "trainer/model.hpp"
-#include "trainer/log.hpp"
-#include "trainer/commands.hpp"
+#include "dispatcher/DispatchCenter.hpp"
+#include "dispatcher/EventLog.hpp"
 
-using namespace std;
+namespace {
+
+// Комнаты A, B, C обслуживает Brigade A которая базируется в build 1.
+// Комнаты D, E, F обслуживает Brigade B которая базируется в build 2.
+
+int unitForRoom(const std::string& room) {
+    if (room == "room A" || room == "room B" || room == "room C") {
+        return 1;
+    }
+    if (room == "room D" || room == "room E" || room == "room F") {
+        return 2;
+    }
+    return 0;
+}
+
+}
 
 int main() {
-    ParameterList parameters = {
-        {"smoke_level", 25, 0, 100, "%"},
-        {"active_sensors", 16, 0, 20, "ed."},
-        {"camera_status", 0, 0, 2, "code."},
-        {"alarm_level", 0, 0, 3, "yp."}
-    };
+    try {
+        dispatcher::EventLog log{"dispatch.log"};
+        dispatcher::DispatchCenter center{log};
+ 
+        center.addUnit(dispatcher::DispatchUnit{1, "Brigade A", "build 1"});
+        center.addUnit(dispatcher::DispatchUnit{2, "Brigade B", "build 2"});
+ 
+        center.addIncident(dispatcher::Incident{
+            100,
+            "room A",
+            "build 1",
+            dispatcher::Severity::High,
+            dispatcher::VisualMarker::Alert
+        });
+        center.addIncident(dispatcher::Incident{
+            101,
+            "room E",
+            "build 2",
+            dispatcher::Severity::Critical,
+            dispatcher::VisualMarker::Evacuation
+        });
+ 
+        center.printState();
 
-    EventLog log;
-    addEvent(log, "INFO", "system", "система запущена");
-
-    cout << "Введите help для списка команд.\n";
-
-    string line;
-    bool running = true;
-
-    while (running) {
-        cout << "dispatcher> ";
-        getline(cin, line);
-        vector<string> tokens = splitCommand(line);
-
-        if (tokens.empty()) {
-            continue;
+        const int incident1Unit = unitForRoom("room A");
+        if (incident1Unit != 0) {
+            center.assign(incident1Unit, 100);
+        }
+        const int incident2Unit = unitForRoom("room E");
+        if (incident2Unit != 0) {
+            center.assign(incident2Unit, 101);
         }
 
-        const string& command = tokens[0];
+        center.printState();
 
-        if (command == "status") {
-            printParameters(parameters);
-        } else if (command == "log") {
-            printEventLog(log);
-        } else if (command == "visual") {
-            printVisualLayers(visualLayerNames());
-        } else if (command == "exit") {
-            addEvent(log, "INFO", "system", "тренажер завершен");
-            running = false;
-        } else if (command == "set") {
-            if (tokens.size() != 3) {
-                cout << "Формат: set <parameter> <value>\n";
-                addEvent(log, "ERROR", "command", "неверный формат set");
-                continue;
-            }
+        center.closeIncident(100);
+        center.closeIncident(101);
 
-            const string& name = tokens[1];
-            int value = stod(tokens[2]);
+        center.printState();
 
-            if (setParameter(parameters, name, value)) {
-                addEvent(log, "INFO", name, "значение изменено");
-                checkParametersAndLogWarnings(parameters, log);
-            } else {
-                cout << "Параметр не найден: " << name << "\n";
-                addEvent(log, "ERROR", name, "параметр не найден");
-            }
-        } else if (command == "event") {
-            if (tokens.size() < 3) {
-                std::cout << "Формат: event <severity> <message>\n";
-                addEvent(log, "ERROR", "command", "неверный формат event");
-                continue;
-            }
-
-            const string& severity = tokens[1];
-            string message;
-
-            for (size_t i = 2; i < tokens.size(); ++i) {
-                if (i > 2) message += " ";
-                message += tokens[i];
-            }
-
-            addEvent(log, severity, "operator_ack", message);
-        } else if (command == "help") {
-            printHelp();
-            addEvent(log, "INFO", "command", "запрошена справка");
-        } else if (command == "camera") {
-            printCameraStatus(parameters);
-        } else {
-            cout << "Неизвестная команда. Введите help.\n";
-            addEvent(log, "ERROR", "command", "неизвестная команда: " + command);
-        }
+    } catch (const std::exception& ex) {
+        std::cerr << "Error: " << ex.what() << '\n';
+        return 1;
     }
     return 0;
 }
