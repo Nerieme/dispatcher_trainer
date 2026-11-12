@@ -1,144 +1,44 @@
 classDiagram
-    class ISystemElement {
+    class ICheckRule {
         <<interface>>
-        +id() string
-        +kind() string
-        +status() string
-        +summary() string
+        +check() CheckResult
     }
-
-    class IVisualDescriptorProvider {
-        <<interface>>
-        +toVisualDescriptor() VisualDescriptor
+    class RangeRule~T~ {
+        -const Parameter~T~& parameter_
+        -Range~T~ normalRange_
+        -string problemMessage_
+        +check() CheckResult
     }
-
-    class Room {
+    class Range~T~ {
+        +T min
+        +T max
+        +contains(const T&) bool
+    }
+    class Parameter~T~ {
         -string id_
-        -string name_
-        -string building_
-        -ElementStatus status_
-        +Room(id, name, building, status)
-        +id() string
-        +kind() string
-        +status() string
-        +summary() string
-        +toVisualDescriptor() VisualDescriptor
-        +building() const string&
-        +setStatus(ElementStatus)
+        -string label_
+        -T value_
+        -string unit_
+        +id() const string&
+        +label() const string&
+        +unit() const string&
+        +value() const T&
+        +setValue(T)
     }
-
-    class Brigade {
-        -string id_
-        -string name_
-        -string baseBuilding_
-        -bool busy_
-        +Brigade(id, name, baseBuilding, busy)
-        +id() string
-        +kind() string
-        +status() string
-        +summary() string
-        +toVisualDescriptor() VisualDescriptor
-        +baseBuilding() const string&
-        +setBusy(bool)
+    class CheckResult {
+        +string parameterId
+        +string message
+        +Severity severity
     }
-
-    class Alarm {
-        -string id_
-        -string roomId_
-        -Severity severity_
-        +Alarm(id, roomId, severity)
-        +id() string
-        +kind() string
-        +status() string
-        +summary() string
-        +toVisualDescriptor() VisualDescriptor
-        +roomId() const string&
-    }
-
-    class Incident {
-        -string id_
-        -string roomId_
-        -string building_
-        -Severity severity_
-        -bool closed_
-        +Incident(id, roomId, building, severity, closed)
-        +id() string
-        +kind() string
-        +status() string
-        +summary() string
-        +toVisualDescriptor() VisualDescriptor
-        +roomId() const string&
-        +building() const string&
-        +close()
-    }
-
-    class ARHint {
-        -string id_
-        -string text_
-        -string anchorId_
-        -int priority_
-        +ARHint(id, text, anchorId, priority)
-        +id() string
-        +kind() string
-        +status() string
-        +summary() string
-        +toVisualDescriptor() VisualDescriptor
-        +anchorId() const string&
-        +priority() int
-    }
-
     class VisualDescriptor {
-        +string id
+        +string objectId
         +string visualKind
         +string label
         +string color
         +int priority
-        +string anchorId
     }
-
-    class ConsoleVisualRenderer {
-        +render(vector~VisualDescriptor~) void
-    }
-
-    class DispatcherModel {
-        -vector~unique_ptr~ISystemElement~~ elements_
-        +addElement(unique_ptr~ISystemElement~)
-        +printSummary() void
-        +collectVisualDescriptors() vector~VisualDescriptor~
-        +size() size_t
-    }
-
-    class ElementStatus {
-        <<enumeration>>
-        Normal
-        Warning
-        Critical
-        Offline
-    }
-
-    class Severity {
-        <<enumeration>>
-        Low
-        Medium
-        High
-        Critical
-    }
-
-    ISystemElement <|-- Room
-    ISystemElement <|-- Brigade
-    ISystemElement <|-- Alarm
-    ISystemElement <|-- Incident
-    ISystemElement <|-- ARHint
-
-    IVisualDescriptorProvider <|-- Room
-    IVisualDescriptorProvider <|-- Brigade
-    IVisualDescriptorProvider <|-- Alarm
-    IVisualDescriptorProvider <|-- Incident
-    IVisualDescriptorProvider <|-- ARHint
-
-    Room --> ElementStatus
-    Alarm --> Severity
-    Incident --> Severity
-
-    DispatcherModel o-- ISystemElement : vector~unique_ptr~
-    ConsoleVisualRenderer ..> VisualDescriptor
+    ICheckRule <|-- RangeRule~T~
+    RangeRule~T~ --> Parameter~T~
+    RangeRule~T~ --> Range~T~
+    RangeRule~T~ ..> CheckResult
+    VisualDescriptor ..> CheckResult

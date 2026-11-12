@@ -1,47 +1,55 @@
 #include <iostream>
 #include <memory>
+#include <vector>
 
-#include "dispatcher/model/DispatcherModel.hpp"
-#include "dispatcher/model/Room.hpp"
-#include "dispatcher/model/Brigade.hpp"
-#include "dispatcher/model/Alarm.hpp"
-#include "dispatcher/model/Incident.hpp"
-#include "dispatcher/model/ARHint.hpp"
-#include "dispatcher/visual/ConsoleVisualRenderer.hpp"
+#include "dispatcher/core/check_result.hpp"
+#include "dispatcher/core/parameter.hpp"
+#include "dispatcher/core/range.hpp"
+#include "dispatcher/core/rules.hpp"
+#include "dispatcher/presentation/visual_descriptor.hpp"
 
 using namespace dispatcher;
 
 int main() {
-    try {
-        DispatcherModel model;
+    Parameter<double> smokeLevel("SMOKE-A", "Уровень задымления room A", 12.0, "%");
+    Parameter<double> temperature("TEMP-D", "Температура room D", 28.5, "C");
+    Parameter<int> activeSensors("SENSORS-B", "Активные датчики room B", 2, "шт.");
+    Parameter<int> brigadeLoad("LOAD-1", "Загрузка Brigade A", 40, "%");
 
-        // Комнаты
-        model.addElement(std::make_unique<Room>("ROOM-A", "room A", "build 1", ElementStatus::Warning));
-        model.addElement(std::make_unique<Room>("ROOM-D", "room D", "build 2", ElementStatus::Normal));
+    std::vector<std::unique_ptr<ICheckRule>> rules;
+    rules.push_back(std::make_unique<RangeRule<double>>(
+        smokeLevel, Range<double>{0.0, 20.0}, "Задымление выше нормы"));
+    rules.push_back(std::make_unique<RangeRule<double>>(
+        temperature, Range<double>{18.0, 30.0}, "Температура вне нормы"));
+    rules.push_back(std::make_unique<RangeRule<int>>(
+        activeSensors, Range<int>{0, 2}, "Слишком много активных датчиков"));
+    rules.push_back(std::make_unique<RangeRule<int>>(
+        brigadeLoad, Range<int>{0, 70}, "Бригада перегружена"));
 
-        // Бригады
-        model.addElement(std::make_unique<Brigade>("BR-A", "Brigade A", "build 1", false));
-        model.addElement(std::make_unique<Brigade>("BR-B", "Brigade B", "build 2", false));
+    std::vector<VisualDescriptor> descriptors;
 
-        // Тревога
-        model.addElement(std::make_unique<Alarm>("AL-01", "ROOM-A", Severity::High));
+    for (const auto& rule : rules) {
+        const CheckResult result = rule->check();
+        std::cout << result.parameterId << ": " << result.message << "\n";
 
-        // Инцидент
-        model.addElement(std::make_unique<Incident>(
-            "INC-01", "ROOM-A", "build 1", Severity::High));
-
-        // AR-подсказка, привязанная к комнате A
-        model.addElement(std::make_unique<ARHint>(
-            "AR-01", "Проверьте комнату A, сработал датчик дыма", "ROOM-A", 70));
-
-        model.printSummary();
-
-        ConsoleVisualRenderer renderer;
-        renderer.render(model.collectVisualDescriptors());
-
-    } catch (const std::exception& ex) {
-        std::cerr << "Error: " << ex.what() << '\n';
-        return 1;
+        VisualDescriptor d;
+        d.objectId   = result.parameterId;
+        d.visualKind = "badge";
+        d.label      = result.message;
+        d.color      = colorBySeverity(result.severity);
+        d.priority   = (result.severity == Severity::Critical) ? 100
+                     : (result.severity == Severity::Warning)  ? 50
+                                                               : 10;
+        descriptors.push_back(std::move(d));
     }
+
+    std::cout << "\n===== Visual descriptors (mock) =====\n";
+    for (const auto& d : descriptors) {
+        std::cout << d.objectId << " | " << d.visualKind
+                  << " | " << d.color
+                  << " | priority=" << d.priority
+                  << " | " << d.label << "\n";
+    }
+
     return 0;
 }

@@ -9,35 +9,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # ---------- Основное приложение ----------
 add_executable(dispatcher_trainer
     app/main.cpp
-    src/model/CommonTypes.cpp
-    src/model/Room.cpp
-    src/model/Brigade.cpp
-    src/model/Alarm.cpp
-    src/model/Incident.cpp
-    src/model/ARHint.cpp
-    src/model/DispatcherModel.cpp
-    src/visual/ConsoleVisualRenderer.cpp
 )
 
 target_include_directories(dispatcher_trainer PRIVATE include)
 target_compile_options(dispatcher_trainer PRIVATE -Wall -Wextra -Wpedantic)
 
 # ---------- Тесты ----------
-add_executable(dispatcher_tests
-    tests/test_model.cpp
-    src/model/CommonTypes.cpp
-    src/model/Room.cpp
-    src/model/Brigade.cpp
-    src/model/Alarm.cpp
-    src/model/Incident.cpp
-    src/model/ARHint.cpp
-    src/model/DispatcherModel.cpp
-)
-target_include_directories(dispatcher_tests PRIVATE include)
-target_compile_options(dispatcher_tests PRIVATE -Wall -Wextra -Wpedantic)
-
 enable_testing()
-add_test(NAME model_smoke COMMAND dispatcher_tests)
+
+add_executable(test_template_rules
+    tests/test_template_rules.cpp
+)
+target_include_directories(test_template_rules PRIVATE include)
+target_compile_options(test_template_rules PRIVATE -Wall -Wextra -Wpedantic)
+
+add_test(NAME template_rules COMMAND test_template_rules)
 
 # target_include_directories(dispatcher_trainer PRIVATE include)
 
