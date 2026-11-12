@@ -1,78 +1,119 @@
 classDiagram
-    class DispatchUnit {
-        -int id_
+    class ISystemElement {
+        <<interface>>
+        +id() string
+        +kind() string
+        +status() string
+        +summary() string
+    }
+
+    class IVisualDescriptorProvider {
+        <<interface>>
+        +toVisualDescriptor() VisualDescriptor
+    }
+
+    class Room {
+        -string id_
         -string name_
-        -string zone_
-        -UnitStatus status_
-        -optional~int~ assignedIncidentId_
-        +DispatchUnit(int id, string name, string zone)
-        +id() int
-        +name() const string&
-        +zone() const string&
-        +status() UnitStatus
-        +assignedIncidentId() optional~int~
-        +assignToIncident(int incidentId) bool
-        +release() void
-        +setMaintenance() void
-        +setOffline() void
+        -string building_
+        -ElementStatus status_
+        +Room(id, name, building, status)
+        +id() string
+        +kind() string
+        +status() string
+        +summary() string
+        +toVisualDescriptor() VisualDescriptor
+        +building() const string&
+        +setStatus(ElementStatus)
+    }
+
+    class Brigade {
+        -string id_
+        -string name_
+        -string baseBuilding_
+        -bool busy_
+        +Brigade(id, name, baseBuilding, busy)
+        +id() string
+        +kind() string
+        +status() string
+        +summary() string
+        +toVisualDescriptor() VisualDescriptor
+        +baseBuilding() const string&
+        +setBusy(bool)
+    }
+
+    class Alarm {
+        -string id_
+        -string roomId_
+        -Severity severity_
+        +Alarm(id, roomId, severity)
+        +id() string
+        +kind() string
+        +status() string
+        +summary() string
+        +toVisualDescriptor() VisualDescriptor
+        +roomId() const string&
     }
 
     class Incident {
-        -int id_
-        -string title_
-        -string zone_
+        -string id_
+        -string roomId_
+        -string building_
         -Severity severity_
-        -IncidentStatus status_
-        -VisualMarker marker_
-        -optional~int~ assignedUnitId_
-        +Incident(int id, string title, string zone, Severity severity, VisualMarker marker)
-        +id() int
-        +title() const string&
-        +zone() const string&
-        +severity() Severity
-        +status() IncidentStatus
-        +marker() VisualMarker
-        +assignedUnitId() optional~int~
-        +assignUnit(int unitId) bool
-        +close() void
+        -bool closed_
+        +Incident(id, roomId, building, severity, closed)
+        +id() string
+        +kind() string
+        +status() string
+        +summary() string
+        +toVisualDescriptor() VisualDescriptor
+        +roomId() const string&
+        +building() const string&
+        +close()
     }
 
-    class EventLog {
-        -ofstream out_
-        +EventLog(const filesystem::path& path)
-        +~EventLog()
-        +write(string_view message) void
+    class ARHint {
+        -string id_
+        -string text_
+        -string anchorId_
+        -int priority_
+        +ARHint(id, text, anchorId, priority)
+        +id() string
+        +kind() string
+        +status() string
+        +summary() string
+        +toVisualDescriptor() VisualDescriptor
+        +anchorId() const string&
+        +priority() int
     }
 
-    class DispatchCenter {
-        -EventLog& log_
-        -vector~DispatchUnit~ units_
-        -vector~Incident~ incidents_
-        -findUnit(int id) DispatchUnit*
-        -findIncident(int id) Incident*
-        +DispatchCenter(EventLog& log)
-        +addUnit(DispatchUnit unit) void
-        +addIncident(Incident incident) void
-        +assign(int unitId, int incidentId) bool
-        +closeIncident(int incidentId) bool
-        +printUnits() const void
-        +printIncidents() const void
-        +printState() const void
+    class VisualDescriptor {
+        +string id
+        +string visualKind
+        +string label
+        +string color
+        +int priority
+        +string anchorId
     }
 
-    class UnitStatus {
+    class ConsoleVisualRenderer {
+        +render(vector~VisualDescriptor~) void
+    }
+
+    class DispatcherModel {
+        -vector~unique_ptr~ISystemElement~~ elements_
+        +addElement(unique_ptr~ISystemElement~)
+        +printSummary() void
+        +collectVisualDescriptors() vector~VisualDescriptor~
+        +size() size_t
+    }
+
+    class ElementStatus {
         <<enumeration>>
-        Available
-        Busy
-        Maintenance
+        Normal
+        Warning
+        Critical
         Offline
-    }
-
-    class IncidentStatus {
-        <<enumeration>>
-        Open
-        Assigned
-        Closed
     }
 
     class Severity {
@@ -83,20 +124,21 @@ classDiagram
         Critical
     }
 
-    class VisualMarker {
-        <<enumeration>>
-        None
-        Alert
-        Route
-        Repair
-        Evacuation
-        Sensor
-    }
+    ISystemElement <|-- Room
+    ISystemElement <|-- Brigade
+    ISystemElement <|-- Alarm
+    ISystemElement <|-- Incident
+    ISystemElement <|-- ARHint
 
-    DispatchCenter "1" o-- "many" DispatchUnit : units_
-    DispatchCenter "1" o-- "many" Incident : incidents_
-    DispatchCenter --> EventLog : log_
-    DispatchUnit --> UnitStatus
-    Incident --> IncidentStatus
+    IVisualDescriptorProvider <|-- Room
+    IVisualDescriptorProvider <|-- Brigade
+    IVisualDescriptorProvider <|-- Alarm
+    IVisualDescriptorProvider <|-- Incident
+    IVisualDescriptorProvider <|-- ARHint
+
+    Room --> ElementStatus
+    Alarm --> Severity
     Incident --> Severity
-    Incident --> VisualMarker
+
+    DispatcherModel o-- ISystemElement : vector~unique_ptr~
+    ConsoleVisualRenderer ..> VisualDescriptor
