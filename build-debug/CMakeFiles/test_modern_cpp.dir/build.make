@@ -83,49 +83,18 @@ CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/dispatcher_trainer/tests/test_modern_cpp.cpp -o CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.s
 
-CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o: CMakeFiles/test_modern_cpp.dir/flags.make
-CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o: /workspaces/dispatcher_trainer/src/stl/Event.cpp
-CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o: CMakeFiles/test_modern_cpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o -MF CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o.d -o CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o -c /workspaces/dispatcher_trainer/src/stl/Event.cpp
-
-CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/dispatcher_trainer/src/stl/Event.cpp > CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.i
-
-CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/dispatcher_trainer/src/stl/Event.cpp -o CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.s
-
-CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o: CMakeFiles/test_modern_cpp.dir/flags.make
-CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o: /workspaces/dispatcher_trainer/src/stl/SimulatorCore.cpp
-CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o: CMakeFiles/test_modern_cpp.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o -MF CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o.d -o CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o -c /workspaces/dispatcher_trainer/src/stl/SimulatorCore.cpp
-
-CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspaces/dispatcher_trainer/src/stl/SimulatorCore.cpp > CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.i
-
-CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspaces/dispatcher_trainer/src/stl/SimulatorCore.cpp -o CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.s
-
 # Object files for target test_modern_cpp
 test_modern_cpp_OBJECTS = \
-"CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.o" \
-"CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o" \
-"CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o"
+"CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.o"
 
 # External object files for target test_modern_cpp
 test_modern_cpp_EXTERNAL_OBJECTS =
 
 test_modern_cpp: CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.o
-test_modern_cpp: CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o
-test_modern_cpp: CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o
 test_modern_cpp: CMakeFiles/test_modern_cpp.dir/build.make
+test_modern_cpp: libdispatcher_core.a
 test_modern_cpp: CMakeFiles/test_modern_cpp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable test_modern_cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable test_modern_cpp"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/test_modern_cpp.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

@@ -1,4 +1,5 @@
-/workspaces/dispatcher_trainer/build-debug/CMakeFiles/dispatcher_trainer.dir
+/workspaces/dispatcher_trainer/build-debug/CMakeFiles/dispatcher_core.dir
+/workspaces/dispatcher_trainer/build-debug/CMakeFiles/dispatcher_app.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/test_stl_core.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/test_modern_cpp.dir
 /workspaces/dispatcher_trainer/build-debug/CMakeFiles/test.dir

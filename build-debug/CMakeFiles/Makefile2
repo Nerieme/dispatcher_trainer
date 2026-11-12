@@ -63,7 +63,8 @@ CMAKE_BINARY_DIR = /workspaces/dispatcher_trainer/build-debug
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/dispatcher_trainer.dir/all
+all: CMakeFiles/dispatcher_core.dir/all
+all: CMakeFiles/dispatcher_app.dir/all
 all: CMakeFiles/test_stl_core.dir/all
 all: CMakeFiles/test_modern_cpp.dir/all
 .PHONY : all
@@ -73,50 +74,77 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/dispatcher_trainer.dir/clean
+clean: CMakeFiles/dispatcher_core.dir/clean
+clean: CMakeFiles/dispatcher_app.dir/clean
 clean: CMakeFiles/test_stl_core.dir/clean
 clean: CMakeFiles/test_modern_cpp.dir/clean
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/dispatcher_trainer.dir
+# Target rules for target CMakeFiles/dispatcher_core.dir
 
 # All Build rule for target.
-CMakeFiles/dispatcher_trainer.dir/all:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target dispatcher_trainer"
-.PHONY : CMakeFiles/dispatcher_trainer.dir/all
+CMakeFiles/dispatcher_core.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=3,4,5 "Built target dispatcher_core"
+.PHONY : CMakeFiles/dispatcher_core.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/dispatcher_trainer.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 4
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dispatcher_trainer.dir/all
+CMakeFiles/dispatcher_core.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 3
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dispatcher_core.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 0
-.PHONY : CMakeFiles/dispatcher_trainer.dir/rule
+.PHONY : CMakeFiles/dispatcher_core.dir/rule
 
 # Convenience name for target.
-dispatcher_trainer: CMakeFiles/dispatcher_trainer.dir/rule
-.PHONY : dispatcher_trainer
+dispatcher_core: CMakeFiles/dispatcher_core.dir/rule
+.PHONY : dispatcher_core
 
 # clean rule for target.
-CMakeFiles/dispatcher_trainer.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/clean
-.PHONY : CMakeFiles/dispatcher_trainer.dir/clean
+CMakeFiles/dispatcher_core.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/clean
+.PHONY : CMakeFiles/dispatcher_core.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/dispatcher_app.dir
+
+# All Build rule for target.
+CMakeFiles/dispatcher_app.dir/all: CMakeFiles/dispatcher_core.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=1,2 "Built target dispatcher_app"
+.PHONY : CMakeFiles/dispatcher_app.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/dispatcher_app.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 5
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dispatcher_app.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 0
+.PHONY : CMakeFiles/dispatcher_app.dir/rule
+
+# Convenience name for target.
+dispatcher_app: CMakeFiles/dispatcher_app.dir/rule
+.PHONY : dispatcher_app
+
+# clean rule for target.
+CMakeFiles/dispatcher_app.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/clean
+.PHONY : CMakeFiles/dispatcher_app.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/test_stl_core.dir
 
 # All Build rule for target.
-CMakeFiles/test_stl_core.dir/all:
+CMakeFiles/test_stl_core.dir/all: CMakeFiles/dispatcher_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=9,10,11,12 "Built target test_stl_core"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=8,9 "Built target test_stl_core"
 .PHONY : CMakeFiles/test_stl_core.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_stl_core.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_stl_core.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/test_stl_core.dir/rule
@@ -134,15 +162,15 @@ CMakeFiles/test_stl_core.dir/clean:
 # Target rules for target CMakeFiles/test_modern_cpp.dir
 
 # All Build rule for target.
-CMakeFiles/test_modern_cpp.dir/all:
+CMakeFiles/test_modern_cpp.dir/all: CMakeFiles/dispatcher_core.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=5,6,7,8 "Built target test_modern_cpp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/workspaces/dispatcher_trainer/build-debug/CMakeFiles --progress-num=6,7 "Built target test_modern_cpp"
 .PHONY : CMakeFiles/test_modern_cpp.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/test_modern_cpp.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 5
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/test_modern_cpp.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /workspaces/dispatcher_trainer/build-debug/CMakeFiles 0
 .PHONY : CMakeFiles/test_modern_cpp.dir/rule

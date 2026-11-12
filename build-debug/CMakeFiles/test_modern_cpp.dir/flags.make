@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/workspaces/dispatcher_trainer/include
 
-CXX_FLAGS = -g -Wall -Wextra -Wpedantic -std=c++20
+CXX_FLAGS = -g -std=c++20
 

@@ -127,17 +127,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named dispatcher_trainer
+# Target rules for targets named dispatcher_core
 
 # Build rule for target.
-dispatcher_trainer: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dispatcher_trainer
-.PHONY : dispatcher_trainer
+dispatcher_core: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dispatcher_core
+.PHONY : dispatcher_core
 
 # fast build rule for target.
-dispatcher_trainer/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/build
-.PHONY : dispatcher_trainer/fast
+dispatcher_core/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/build
+.PHONY : dispatcher_core/fast
+
+#=============================================================================
+# Target rules for targets named dispatcher_app
+
+# Build rule for target.
+dispatcher_app: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 dispatcher_app
+.PHONY : dispatcher_app
+
+# fast build rule for target.
+dispatcher_app/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/build
+.PHONY : dispatcher_app/fast
 
 #=============================================================================
 # Target rules for targets named test_stl_core
@@ -170,7 +183,7 @@ app/main.o: app/main.cpp.o
 
 # target to build an object file
 app/main.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/app/main.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/app/main.cpp.o
 .PHONY : app/main.cpp.o
 
 app/main.i: app/main.cpp.i
@@ -178,7 +191,7 @@ app/main.i: app/main.cpp.i
 
 # target to preprocess a source file
 app/main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/app/main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/app/main.cpp.i
 .PHONY : app/main.cpp.i
 
 app/main.s: app/main.cpp.s
@@ -186,7 +199,7 @@ app/main.s: app/main.cpp.s
 
 # target to generate assembly for a file
 app/main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/app/main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_app.dir/build.make CMakeFiles/dispatcher_app.dir/app/main.cpp.s
 .PHONY : app/main.cpp.s
 
 src/stl/Event.o: src/stl/Event.cpp.o
@@ -194,9 +207,7 @@ src/stl/Event.o: src/stl/Event.cpp.o
 
 # target to build an object file
 src/stl/Event.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/src/stl/Event.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/src/stl/Event.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/Event.cpp.o
 .PHONY : src/stl/Event.cpp.o
 
 src/stl/Event.i: src/stl/Event.cpp.i
@@ -204,9 +215,7 @@ src/stl/Event.i: src/stl/Event.cpp.i
 
 # target to preprocess a source file
 src/stl/Event.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/src/stl/Event.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/src/stl/Event.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/Event.cpp.i
 .PHONY : src/stl/Event.cpp.i
 
 src/stl/Event.s: src/stl/Event.cpp.s
@@ -214,9 +223,7 @@ src/stl/Event.s: src/stl/Event.cpp.s
 
 # target to generate assembly for a file
 src/stl/Event.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/src/stl/Event.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/src/stl/Event.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/src/stl/Event.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/Event.cpp.s
 .PHONY : src/stl/Event.cpp.s
 
 src/stl/SimulatorCore.o: src/stl/SimulatorCore.cpp.o
@@ -224,9 +231,7 @@ src/stl/SimulatorCore.o: src/stl/SimulatorCore.cpp.o
 
 # target to build an object file
 src/stl/SimulatorCore.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/src/stl/SimulatorCore.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/src/stl/SimulatorCore.cpp.o
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/SimulatorCore.cpp.o
 .PHONY : src/stl/SimulatorCore.cpp.o
 
 src/stl/SimulatorCore.i: src/stl/SimulatorCore.cpp.i
@@ -234,9 +239,7 @@ src/stl/SimulatorCore.i: src/stl/SimulatorCore.cpp.i
 
 # target to preprocess a source file
 src/stl/SimulatorCore.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/src/stl/SimulatorCore.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/src/stl/SimulatorCore.cpp.i
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/SimulatorCore.cpp.i
 .PHONY : src/stl/SimulatorCore.cpp.i
 
 src/stl/SimulatorCore.s: src/stl/SimulatorCore.cpp.s
@@ -244,9 +247,7 @@ src/stl/SimulatorCore.s: src/stl/SimulatorCore.cpp.s
 
 # target to generate assembly for a file
 src/stl/SimulatorCore.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_trainer.dir/build.make CMakeFiles/dispatcher_trainer.dir/src/stl/SimulatorCore.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_stl_core.dir/build.make CMakeFiles/test_stl_core.dir/src/stl/SimulatorCore.cpp.s
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/test_modern_cpp.dir/build.make CMakeFiles/test_modern_cpp.dir/src/stl/SimulatorCore.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dispatcher_core.dir/build.make CMakeFiles/dispatcher_core.dir/src/stl/SimulatorCore.cpp.s
 .PHONY : src/stl/SimulatorCore.cpp.s
 
 tests/test_modern_cpp.o: tests/test_modern_cpp.cpp.o
@@ -306,7 +307,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... test"
-	@echo "... dispatcher_trainer"
+	@echo "... dispatcher_app"
+	@echo "... dispatcher_core"
 	@echo "... test_modern_cpp"
 	@echo "... test_stl_core"
 	@echo "... app/main.o"
