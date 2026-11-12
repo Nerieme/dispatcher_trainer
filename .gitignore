@@ -1,6 +1,5 @@
 build/
 out/
-screenshoots/
 .cache/
 *.o
 *.obj
