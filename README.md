@@ -51,14 +51,24 @@ fix: уточнено сообщение об отсутствующем пар�
 docs: clarify build directory in main;
 docs: describe alternative build directory;
 merge: resolve conflict in build directory description.
-6. Фрагмент git log --oneline --decorate --graph --all:
-*   b8183a3 (HEAD -> main) merge: resolve conflict in build directory description
+6. Фрагмент git log --oneline --decorate --graph --all --max-count=15
+*   58c8069 (HEAD -> Lab_9) merge: resolve conflict in README
 |\  
-| * 1794e84 (feature/conflict-demo) docs: describe alternative build directory
-* | 3f30905 docs: clarify build directory in main
+| * 40ce7d2 (feature/conflict-demo) docs: describe alternative build directory
+* | 93afd3c (feature/history-and-readme) docs: describe build and run steps
 |/  
-* c697439 (feature/history-and-readme) fix: уточнено сообщение об отсутствующем параметре
-* 578b270 chore: prepare project for lab 9
+* 8b35b81 chore: prepare project for lab 9
+* cd65889 (origin/Lab_8, Lab_8) lab8: add optional variant and filesystem usage
+* 2458214 (origin/Lab_7, Lab_7) Add STL algorithms for simulator core
+* 9d733ee (origin/Lab_6, Lab_6) Lab_6: Expand dispatcher core with <T>emplates
+* 381e0e8 (origin/Lab_5, Lab_5) Lab_5: Expand object model
+* c7af20b (origin/Lab_4, Lab_4) update screenshots for lab 4
+* 34d4f69 Lab 4: add object model for dispatcher trainer
+* 03e9da4 (origin/Lab_3, Lab_3) update screenshots
+* 06e54b8 Add in-memory parameters and event log for dispatcher trainer
+* 957c73a (origin/Lab_2, Lab_2) lab2: add dispatcher trainer console logic
+* 141e806 (origin/Lab_1, master, Lab_1) add lab1 screenshoots
+* f3307b0 Initialize C++20 devcontainer project
 7. Описание merge — fast-forward.
 8. Описание конфликта — 470 строка README: CONFLICT (content): Merge conflict in README.md, конфликт решен вручную.
 9. Git позволяет фиксировать развитие проекта не как набор разрозненных файлов, а как управляемую историю изменений. В учебном проекте это даёт несколько конкретных преимуществ:
