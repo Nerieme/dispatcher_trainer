@@ -9,6 +9,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # ---------- Основное приложение ----------
 add_executable(dispatcher_trainer
     app/main.cpp
+    src/stl/Event.cpp
+    src/stl/SimulatorCore.cpp
 )
 
 target_include_directories(dispatcher_trainer PRIVATE include)
@@ -17,13 +19,15 @@ target_compile_options(dispatcher_trainer PRIVATE -Wall -Wextra -Wpedantic)
 # ---------- Тесты ----------
 enable_testing()
 
-add_executable(test_template_rules
-    tests/test_template_rules.cpp
+add_executable(test_stl_core
+    tests/test_stl_core.cpp
+    src/stl/Event.cpp
+    src/stl/SimulatorCore.cpp
 )
-target_include_directories(test_template_rules PRIVATE include)
-target_compile_options(test_template_rules PRIVATE -Wall -Wextra -Wpedantic)
+target_include_directories(test_stl_core PRIVATE include)
+target_compile_options(test_stl_core PRIVATE -Wall -Wextra -Wpedantic)
 
-add_test(NAME template_rules COMMAND test_template_rules)
+add_test(NAME stl_core COMMAND test_stl_core)
 
 # target_include_directories(dispatcher_trainer PRIVATE include)
 
