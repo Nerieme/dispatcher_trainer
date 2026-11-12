@@ -36,7 +36,7 @@ bool SimulatorCore::setParameterValue(const std::string& name, double value) {
     auto index = findParameterIndex(name);
     if (!index) {
         addEvent({events_.size() + 1, EventType::Warning,
-                  "Параметр не найден: " + name, 5});
+                  "Ошибка команды: параметр не найден — " + name, 5});
         return false;
     }
     parameters_[*index].value = value;
@@ -49,7 +49,7 @@ CommandResult SimulatorCore::applyOperatorCommand(const std::string& parameterNa
                                                    double newValue) {
     auto index = findParameterIndex(parameterName);
     if (!index) {
-        return CommandError{"Параметр не найден: " + parameterName};
+        return CommandError{"Ошибка команды: параметр не найден — " + parameterName};
     }
 
     Parameter& p = parameters_[*index];

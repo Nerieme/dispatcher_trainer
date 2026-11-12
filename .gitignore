@@ -1,6 +1,12 @@
+# Build directories
 build/
+build-debug/
 out/
+screenshoots/
+cmake-build-*/
 .cache/
+
+# Compiled files
 *.o
 *.obj
 *.exe
@@ -9,5 +15,13 @@ out/
 *.dylib
 *.a
 *.log
+
+# IDE and system files
 .vscode/.browse.VC.db*
 .DS_Store
+.vscode/.cache/
+.DS_Store
+Thumbs.db
+
+# Generated logs
+logs/
