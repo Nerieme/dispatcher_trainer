@@ -1,59 +1,142 @@
-## Краткое описание цели выполненной структурной доработки
-Целью структурной доработки было разделение учебного проекта диспетчерского тренажёра на две независимые CMake-цели: библиотеку ядра dispatcher_core и консольное приложение dispatcher_app. До ЛР 10 весь код собирался одной командой add_executable — предметная логика (SimulatorCore, Parameter, Event, CommandResult) и код меню (app/main.cpp) были перемешаны в одном списке источников. Это затрудняло повторное использование ядра: тесты собирали .cpp-файлы заново, а любое приложение-клиент вынуждено было тащить за собой весь main.cpp.
+## Название работы и выбранный вариант предметной области
 
-После доработки:
+Лабораторная работа 11. Воспроизводимая учебная среда.
+Вариант предметной области: диспетчер безопасности объекта.
 
-dispatcher_core — статическая библиотека, содержащая только предметную логику: Event.cpp, SimulatorCore.cpp, заголовки include/dispatcher/stl/*.hpp. Она не знает про std::cin/std::cout и не содержит меню.
-dispatcher_app — исполняемый файл с app/main.cpp, который линкуется с dispatcher_core через target_link_libraries(... PRIVATE ...). Здесь только ввод-вывод и вызовы методов ядра.
-test_stl_core и test_modern_cpp — тесты, которые тоже линкуются с dispatcher_core, а не пересобирают его .cpp-файлы.
+## Краткое описание того, зачем проекту нужна воспроизводимая среда
 
-Дополнительно:
+В предыдущих лабораторных работах проект собирался через CMake на конкретном компьютере. При переносе на другую машину могли возникнуть проблемы:
 
-заголовки подключаются через target_include_directories(dispatcher_core PUBLIC include) — единый путь, без относительных ../../include;
-стандарт C++20 задан на уровне цели через target_compile_features(... PUBLIC cxx_std_20), а не глобально;
-сборка вынесена out-of-source: build-debug/ и build-release/ отдельно, исходный каталог не засоряется;
-проверены обе конфигурации — Debug (с отладочной информацией) и Release (с оптимизацией);
-.gitignore обновлён: build-debug/, build-release/ исключены из репозитория.
+1. разные версии g++/clang++ дают разное поведение для std::optional, std::variant, concepts;
+2. разная версия CMake может по-разному обрабатывать target_compile_features и target_include_directories;
+3. разный набор установленных пакетов (build-essential, gdb, git);
+4. настройки VS Code (launch.json, settings.json) у каждого свои.
 
-## Вывод о том, что изменилось в инженерной организации проекта по сравнению с предыдущими работами
-До ЛР 10 проект собирался одной целью add_executable(dispatcher_trainer ...), в которую входили и предметная логика, и main.cpp. Это работало для учебного сценария, но плохо масштабировалось:
+Воспроизводимая среда через Docker Dev Container решает эти проблемы:
 
-1. тесты (test_stl_core, test_modern_cpp) вынуждены были заново перечислять все .cpp-файлы ядра — любое изменение списка источников нужно было дублировать в двух-трёх местах;
-2. любое новое приложение (например, будущий сетевой сервер или GUI-клиент) должно было тащить за собой main.cpp или копировать список источников;
-3. заголовки подключались через относительные пути, что делало структуру хрупкой при перемещении файлов;
-4. стандарт C++ задавался глобально через CMAKE_CXX_STANDARD, а не на уровне цели;
-5. Debug и Release собирались в один каталог build/, что затрудняло сравнение конфигураций.
+1. все студенты и преподаватель работают в одинаковой версии и одинаковом наборе инструментов;
+2. сборка выполняется по одному сценарию — cmake -S . -B build-debug, cmake --build build-debug;
+3. .devcontainer/ хранится в Git, поэтому среда передаётся вместе с проектом;
+4. README содержит единые команды для devcontainer и Linux VM.
 
-После ЛР 10:
+Это делает проект воспроизводимым: преподаватель открывает репозиторий в контейнере и получает тот же результат, что и автор.
 
-1. Появилась библиотека dispatcher_core — единая точка сборки предметной логики. Её можно линковать к любому числу приложений и тестов.
-2. Появилось приложение dispatcher_app — отдельная цель, которая зависит от ядра через target_link_libraries(... PRIVATE ...). Приложение не содержит предметной логики, только ввод-вывод.
-3. Тесты линкуются с dispatcher_core, а не пересобирают .cpp-файлы. Список источников ядра задан в одном месте — в add_library.
-4. Заголовки подключаются через target_include_directories(PUBLIC include) — единый путь, независимый от положения .cpp-файлов.
-5. Стандарт C++20 задан на уровне цели через target_compile_features(... PUBLIC cxx_std_20) — компилятор применяет его к библиотеке и ко всем, кто с ней линкуется.
-6. Debug и Release собираются в отдельные каталоги (build-debug/, build-release/) — out-of-source build, исходный каталог остаётся чистым.
-7. .gitignore обновлён — артефакты сборки не попадают в репозиторий.
-8. README обновлён — команды Debug/Release, структура каталогов, разделение «библиотека / приложение».
+## Текст Dockerfile и пояснение пакетов
 
-Итог: проект стал воспроизводимым — другой человек может собрать его двумя командами (cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug и cmake --build build-debug), не зная внутренней структуры. Появилась точка расширения: будущий сетевой сервер или GUI-клиент сможет линковаться с dispatcher_core, не копируя предметную логику. Это и есть инженерный результат ЛР 10 — не новый код, а организация сборки, которая делает проект пригодным для дальнейшего роста.
+```dockerfile
+FROM mcr.microsoft.com/devcontainers/cpp:1-debian-12
 
-## Контрольные вопросы
+RUN apt-get update \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y --no-install-recommends \
+        cmake ninja-build git clang clangd clang-format lldb gdb \
+        pkg-config ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
 
-1. CMake описывает структуру проекта и генерирует правила сборки для компилятора; сам компилятором не является.
-2. cmake -S . -B build — -S исходный каталог, -B каталог сборки (out-of-source).
-3. Out-of-source — временные файлы не смешиваются с исходниками, проще очистка (rm -rf build).
-4. Библиотека ядра — состояние, параметры, события, обработка; приложение — ввод-вывод, меню, вызовы ядра.
-5. add_library создаёт библиотечную цель.
-6. add_executable создаёт исполняемую цель.
-7. target_link_libraries связывает приложение с библиотекой.
-8. target_include_directories — единый include/, а не ../../include в каждом файле.
-9. PUBLIC — путь к заголовкам наследуется всеми, кто линкуется с библиотекой.
-10. PRIVATE — приложение использует ядро, но не передаёт зависимость дальше.
-11. Debug vs Release — Debug с отладочной информацией и без оптимизаций, Release с оптимизациями.
-12. build/, build-debug/, build-release/ не в Git — это артефакты, их можно пересоздать.
-13. В simulator_core — Parameter, Event, TrainingSession/SimulatorCore, обработка коллекций.
-14. В app/main.cpp — main, меню, демо-сценарий, вызовы ядра.
-15. Признаки воспроизводимости — CMakeLists.txt в корне, include/ через target_include_directories, отдельные build-*, README с командами.
-16. README — структура, Debug/Release, Linux VM, ограничения.
-17. Ошибка без target_link_libraries — undefined reference при линковке.
-18. Не смешивать коммиты — перенос файлов, исправление логики и README — разные логические изменения.
+WORKDIR /workspaces/dispatcher_trainer
+```
+
+1. mcr.microsoft.com/devcontainers/cpp:1-debian-12	- 
+базовый образ Microsoft Dev Containers на Debian 12 (bookworm). Уже содержит vscode-пользователя, git, sudo, типичные настройки devcontainer
+2. cmake - сборка проекта
+3. ninja-build - генератор Ninja (в devcontainer.json — "cmake.generator": "Ninja")
+4. git - история, коммиты
+5. clang - компилятор clang++ (проверяется в postCreateCommand)
+6. clangd - language server для VS Code (проверяется в postCreateCommand)
+7. clang-format - форматирование кода
+8. lldb - отладчик, на котором работает CodeLLDB (проверяется в postCreateCommand)
+9. gdb - альтернативный отладчик из консоли
+10. pkg-config, ca-certificates - на будущее
+11. WORKDIR /workspaces/dispatcher_trainer — рабочая папка, совпадает с workspaceFolder в devcontainer.json.
+
+## Текст devcontainer.json и пояснение
+```json
+{
+  "name": "C++20 Dispatcher Trainer",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cmake-tools",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "vadimcn.vscode-lldb"
+      ],
+      "settings": {
+        "C_Cpp.intelliSenseEngine": "disabled",
+        "cmake.configureOnOpen": true,
+        "cmake.generator": "Ninja"
+      }
+    }
+  },
+  "postCreateCommand": "cmake --version && clang++ --version && clangd --version && lldb --version",
+  "remoteUser": "vscode"
+}
+```
+
+1. name - отображается в левом нижнем углу VS Code
+2. build.dockerfile - путь к Dockerfile
+3. build.context - контекст сборки — корень проекта
+4. customizations.vscode.extensions - рекомендованные расширения: CMake Tools, clangd, CodeLLDB
+5. customizations.vscode.settings - отключает встроенный IntelliSense (используем clangd), включает авто-Configure CMake, задаёт Ninja
+6. postCreateCommand - после создания контейнера проверяет версии cmake, clang++, clangd, lldb — если что-то не установлено, контейнер сообщит об ошибке
+7. remoteUser - пользователь внутри контейнера — vscode
+
+## Проверка версий инструментов внутри контейнера
+
+cmake --version
+clang++ --version
+clangd --version
+lldb --version
+ninja --version
+git --version
+
+## Команды CMake-сборки и запуска внутри контейнера
+
+```bash
+rm -rf build-debug
+cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build-debug
+./build-debug/dispatcher_app
+```
+
+Release-сборка:
+```bash
+cmake -S . -B build-release -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build-release
+./build-release/dispatcher_app
+```
+
+Тесты:
+```bash
+ctest --test-dir build-debug --output-on-failure
+```
+
+## Инструкция запуска
+
+### Вариант 1 — Docker Dev Container (основной)
+
+1. Установить Docker Desktop и расширение VS Code **Dev Containers**.
+2. Открыть папку проекта в VS Code.
+3. Command Palette → **Dev Containers: Reopen in Container**.
+4. Дождаться сборки контейнера. `postCreateCommand` автоматически проверит
+   версии `cmake`, `clang++`, `clangd`, `lldb`.
+5. В терминале контейнера собрать и запустить:
+
+```bash
+cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build-debug
+./build-debug/dispatcher_app
+```
+
+### Вариант 2 — Linux VM VirtualBox (альтернативный)
+
+```bash
+sudo apt update
+sudo apt install -y build-essential clang clangd lldb cmake ninja-build git
+cmake -S . -B build-debug -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cmake --build build-debug
+./build-debug/dispatcher_app
+```

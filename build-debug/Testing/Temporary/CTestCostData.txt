@@ -1,3 +1,3 @@
-stl_core 2 0.00212095
-modern_cpp 2 0.00929335
+stl_core 1 0.003337
+modern_cpp 1 0.0103008
 ---
