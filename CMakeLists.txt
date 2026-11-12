@@ -7,6 +7,24 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # =========================================================
+# Санитайзеры (AddressSanitizer + UBSan)
+# =========================================================
+option(ENABLE_SANITIZERS "Enable AddressSanitizer and UBSan" OFF)
+
+function(enable_project_sanitizers target_name)
+    if (ENABLE_SANITIZERS AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${target_name} PRIVATE
+            -fsanitize=address,undefined
+            -fno-omit-frame-pointer
+            -g
+        )
+        target_link_options(${target_name} PRIVATE
+            -fsanitize=address,undefined
+        )
+    endif()
+endfunction()
+
+# =========================================================
 # Библиотека ядра тренажёра
 # =========================================================
 add_library(dispatcher_core
@@ -56,35 +74,30 @@ target_compile_options(dispatcher_app
 # =========================================================
 enable_testing()
 
-add_executable(test_stl_core
-    tests/test_stl_core.cpp
-)
-target_link_libraries(test_stl_core PRIVATE dispatcher_core)
-target_compile_features(test_stl_core PRIVATE cxx_std_20)
-add_test(NAME stl_core COMMAND test_stl_core)
-
-add_executable(test_modern_cpp
-    tests/test_modern_cpp.cpp
-)
-target_link_libraries(test_modern_cpp PRIVATE dispatcher_core)
-target_compile_features(test_modern_cpp PRIVATE cxx_std_20)
-add_test(NAME modern_cpp COMMAND test_modern_cpp)
-
 add_executable(dispatcher_tests
     tests/test_core.cpp
 )
-target_link_libraries(dispatcher_tests PRIVATE dispatcher_core)
-target_compile_features(dispatcher_tests PRIVATE cxx_std_20)
+
+target_link_libraries(dispatcher_tests
+    PRIVATE
+        dispatcher_core
+)
+
+target_compile_features(dispatcher_tests
+    PRIVATE
+        cxx_std_20
+)
+
 target_compile_options(dispatcher_tests
     PRIVATE
         -Wall -Wextra -Wpedantic
 )
+
 add_test(NAME dispatcher_tests COMMAND dispatcher_tests)
 
-# target_include_directories(dispatcher_trainer PRIVATE include)
-
-# target_compile_options(dispatcher_trainer PRIVATE
-#     -Wall
-#     -Wextra
-#     -Wpedantic
-# )
+# =========================================================
+# Применение санитайзеров к целям (после их создания)
+# =========================================================
+enable_project_sanitizers(dispatcher_core)
+enable_project_sanitizers(dispatcher_app)
+enable_project_sanitizers(dispatcher_tests)

@@ -33,6 +33,22 @@ void test_value_inside_range_is_accepted() {
     check(p->value == 40.0, "value should be updated to 40.0");
 }
 
+void test_value_on_boundary_is_accepted() {
+    SimulatorCore core;
+    core.addParameter({"temperature", 28.5, 18.0, 70.0, "C"});
+    core.rebuildParameterIndex();
+
+    // Значение ровно на верхней границе — допустимо
+    CommandResult atMax = core.applyOperatorCommand("temperature", 70.0);
+    check(std::holds_alternative<CommandOk>(atMax),
+          "value exactly at max should be accepted as CommandOk");
+
+    // Значение ровно на нижней границе — тоже допустимо
+    CommandResult atMin = core.applyOperatorCommand("temperature", 18.0);
+    check(std::holds_alternative<CommandOk>(atMin),
+          "value exactly at min should be accepted as CommandOk");
+}
+
 void test_value_below_range_is_clamped_or_rejected() {
     SimulatorCore core;
     core.addParameter({"temperature", 28.5, 18.0, 70.0, "C"});
@@ -176,6 +192,7 @@ int main() {
     test_value_inside_range_is_accepted();
     test_value_below_range_is_clamped_or_rejected();
     test_value_above_range_is_clamped_or_rejected();
+    test_value_on_boundary_is_accepted();
 
     // 2. Изменение состояния
     test_parameter_update_changes_state();

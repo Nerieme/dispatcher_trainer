@@ -7,7 +7,6 @@
 #include "dispatcher/stl/Event.hpp"
 #include "dispatcher/stl/Parameter.hpp"
 
-
 using namespace dispatcher;
 
 namespace {
