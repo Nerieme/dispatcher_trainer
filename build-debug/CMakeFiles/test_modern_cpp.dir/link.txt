@@ -1,1 +1,0 @@
-/usr/bin/c++ -g CMakeFiles/test_modern_cpp.dir/tests/test_modern_cpp.cpp.o -o test_modern_cpp  libdispatcher_core.a 
