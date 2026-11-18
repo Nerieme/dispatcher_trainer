@@ -4,5 +4,6 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
     cmake ninja-build git clang clangd clang-format lldb gdb \
     pkg-config ca-certificates \
+    libcppunit-dev \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /workspaces/dispatcher_trainer

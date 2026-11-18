@@ -96,6 +96,34 @@ target_compile_options(dispatcher_tests
 add_test(NAME dispatcher_tests COMMAND dispatcher_tests)
 
 # =========================================================
+# Тесты CppUnit
+# =========================================================
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(CPPUNIT REQUIRED cppunit)
+
+add_executable(dispatcher_cppunit_tests
+    tests/test_core_cppunit.cpp
+)
+
+target_link_libraries(dispatcher_cppunit_tests
+    PRIVATE
+        dispatcher_core
+        ${CPPUNIT_LIBRARIES}
+)
+
+target_compile_features(dispatcher_cppunit_tests
+    PRIVATE
+        cxx_std_20
+)
+
+target_compile_options(dispatcher_cppunit_tests
+    PRIVATE
+        -Wall -Wextra -Wpedantic
+)
+
+add_test(NAME dispatcher_cppunit_tests COMMAND dispatcher_cppunit_tests)
+
+# =========================================================
 # Применение санитайзеров к целям (после их создания)
 # =========================================================
 enable_project_sanitizers(dispatcher_core)
